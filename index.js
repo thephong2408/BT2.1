@@ -81,19 +81,14 @@ setInterval(updateDateTime, 1000);
 
 function updateDate() {
   let now = new Date();
-  let month = now.getMonth() + 1;
+  let month = now.getMonth();
   let day = now.getDate();
   let year = now.getFullYear();
 
-  dateElement.innerHTML = `${daysOfMonth[day]}, ${
+  dateElement.innerHTML = `${daysOfMonth[day - 1]}, ${
     monthNames[month - 1]
   }, ${year}`;
 }
-month_year.onclick = function () {
-  table.style.display = "";
-  table1.style.display = "";
-  table2.style.display = "";
-};
 
 updateDate();
 // thực hiện logic ở table
@@ -107,10 +102,13 @@ function renderCalendar(month, year) {
   tbody.innerHTML = "";
 
   const firstDay = new Date(year, month, 1).getDay();
-
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-
   const prevMonthDays = new Date(year, month, 0).getDate();
+
+  const clearBorders = () => {
+    const allCells = document.querySelectorAll("th");
+    allCells.forEach((cell) => cell.classList.remove("border"));
+  };
 
   let row = document.createElement("tr");
   for (let i = firstDay; i > 0; i--) {
@@ -118,7 +116,10 @@ function renderCalendar(month, year) {
     cell.classList.add("day__cancel");
     cell.innerText = prevMonthDays - i + 1;
     row.appendChild(cell);
-    tbody.appendChild(row);
+    cell.onclick = () => {
+      clearBorders();
+      cell.classList.add("border");
+    };
   }
   for (let day = 1; day <= daysInMonth; day++) {
     if (row.children.length === 7) {
@@ -126,6 +127,10 @@ function renderCalendar(month, year) {
       row = document.createElement("tr");
     }
     let cell = document.createElement("th");
+    cell.onclick = () => {
+      clearBorders();
+      cell.classList.add("border");
+    };
     if (
       day === now.getDate() &&
       month === now.getMonth() &&
@@ -141,6 +146,10 @@ function renderCalendar(month, year) {
     let cell = document.createElement("th");
     cell.classList.add("day__cancel");
     cell.innerText = nextMonthDay++;
+    cell.onclick = () => {
+      clearBorders();
+      cell.classList.add("border");
+    };
     row.appendChild(cell);
   }
   tbody.appendChild(row);
@@ -152,6 +161,10 @@ function renderCalendar(month, year) {
       cell.classList.add("day__cancel");
       cell.innerText = nextMonthDay++;
       row.appendChild(cell);
+      cell.onclick = () => {
+        clearBorders();
+        cell.classList.add("border");
+      };
     }
     tbody.appendChild(row);
   }
@@ -165,7 +178,7 @@ function click1() {
     month--;
   }
   renderCalendar(month, year);
-  month_year.innerHTML = ` ${monthNames[month]}, ${year}`;
+  month_year.innerHTML = ` ${monthNames[month - 1]}, ${year}`;
 }
 
 function click2() {
@@ -176,7 +189,7 @@ function click2() {
     month++;
   }
   renderCalendar(month, year);
-  month_year.innerHTML = ` ${monthNames[month]}, ${year}`;
+  month_year.innerHTML = ` ${monthNames[month - 1]}, ${year}`;
 }
 
 btn2.addEventListener("click", click2);
@@ -197,16 +210,27 @@ function renderCalendar1(nextYear) {
       tbody1.appendChild(row);
     }
     let cell = document.createElement("th");
-    if (i === new Date().getMonth() && nextYear == new Date().getFullYear()) {
+    if (
+      i + 1 === new Date().getMonth() &&
+      nextYear == new Date().getFullYear()
+    ) {
       cell.classList.add("month__now");
     }
     cell.innerText = abbreviatedMonthNames[i];
     cell.onclick = function () {
       renderCalendar(i, nextYear);
-      table.style.display = "block";
-      table1.style.display = "none";
+      // table1.style.display = "none";
+      table1.classList.remove("animation_scale-1");
+      table1.classList.add("animation_scale-0");
+      setTimeout(() => {
+        table.style.display = "";
+        table.classList.remove("animation_scale-0");
+        table.classList.add("animation_scale-1");
+        table1.style.display = "none";
+      }, 300);
       table2.style.display = "none";
-      month_year.innerHTML = ` ${monthNames[i]}, ${nextYear}`;
+      year1.innerHTML = ` ${nextYear}`;
+      month_year.innerHTML = ` ${monthNames[i - 1]}, ${nextYear}`;
     };
     row.appendChild(cell);
   }
@@ -218,9 +242,16 @@ function renderCalendar1(nextYear) {
     cell.classList.add("month__cancel");
     cell.onclick = function () {
       renderCalendar(i, nextYear);
-      table.style.display = "block";
-      table1.style.display = "none";
+      table1.classList.remove("animation_scale-1");
+      table1.classList.add("animation_scale-0");
+      setTimeout(() => {
+        table.style.display = "";
+        table.classList.remove("animation_scale-0");
+        table.classList.add("animation_scale-1");
+        table1.style.display = "none";
+      }, 300);
       table2.style.display = "none";
+      year1.innerHTML = ` ${nextYear}`;
       month_year.innerHTML = ` ${monthNames[i]}, ${nextYear}`;
     };
     row.appendChild(cell);
@@ -269,10 +300,15 @@ function renderCalendar2() {
     let nextYear = i;
     cell.onclick = function () {
       renderCalendar1(nextYear);
-
+      table2.classList.remove("animation_scale-1");
+      table2.classList.add("animation_scale-0");
+      setTimeout(() => {
+        table1.style.display = "";
+        table1.classList.remove("animation_scale-0");
+        table1.classList.add("animation_scale-1");
+        table2.style.display = "none";
+      }, 300);
       table.style.display = "none";
-      table1.style.display = "block";
-      table2.style.display = "none";
       year1.innerHTML = ` ${nextYear}`;
     };
     row.appendChild(cell);
@@ -291,9 +327,16 @@ function renderCalendar2() {
     cell.classList.add("month__cancel");
     cell.onclick = function () {
       renderCalendar1(nextYear);
+      table2.classList.remove("animation_scale-1");
+      table2.classList.add("animation_scale-0");
+      setTimeout(() => {
+        table1.style.display = "";
+        table1.classList.remove("animation_scale-0");
+        table1.classList.add("animation_scale-1");
+        table2.style.display = "none";
+      }, 300);
       table.style.display = "none";
-      table1.style.display = "block";
-      table2.style.display = "none";
+      year1.innerHTML = ` ${nextYear}`;
       year1.innerHTML = ` ${i}`;
     };
 
@@ -317,15 +360,23 @@ btn12.addEventListener("click", click13);
 btn23.addEventListener("click", click23);
 
 month_year.addEventListener("click", () => {
-  table.style.display = "none";
-  table1.style.display = "block";
+  table.classList.remove("animation_scale-1");
+  table.classList.add("animation_scale-0");
+  setTimeout(() => {
+    table1.style.display = "block";
+    table1.classList.add("animation_scale-1");
+  }, 300);
   table2.style.display = "none";
 });
 
 year1.addEventListener("click", () => {
+  table1.classList.remove("animation_scale-1");
+  table1.classList.add("animation_scale-0");
+  setTimeout(() => {
+    table2.style.display = "block";
+    table2.classList.add("animation_scale-1");
+  }, 300);
   table.style.display = "none";
-  table1.style.display = "none";
-  table2.style.display = "block";
 });
 date_year.addEventListener("click", () => {
   table.style.display = "block";

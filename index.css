@@ -24,6 +24,7 @@ li {
 .container {
   background-color: rgba(0, 0, 0, 0.8);
   width: 500px;
+  height: 543px;
   display: flex;
   flex-direction: column;
 }
@@ -126,4 +127,40 @@ tbody th:hover {
 }
 .div_table2 {
   display: none;
+}
+@keyframes scale-0 {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  99% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    display: none;
+  }
+}
+@keyframes scale-1 {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  99% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    display: block;
+  }
+}
+.animation_scale-0 {
+  animation: scale-0 0.3s forwards;
+}
+.animation_scale-1 {
+  animation: scale-1 0.3s forwards;
+  display: block;
+}
+.border {
+  border-color: aqua;
 }
